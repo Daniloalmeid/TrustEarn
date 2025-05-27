@@ -96,6 +96,23 @@ body {
     transform: translateY(-2px);
   }
   
+  .btn-withdraw {
+    background-color: #FFD166;
+    border: none;
+    color: #333333;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-withdraw:hover {
+    background-color: #FFC107;
+    transform: translateY(-2px);
+  }
+  
   /* Hero Section */
   .hero {
     text-align: center;
@@ -125,45 +142,45 @@ body {
   /* Product Cards */
   .product-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    padding: 2rem 0;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem 0;
   }
   
   .product-card {
     background-color: #FFFFFF;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   
   .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
   }
   
   .product-card img {
     width: 100%;
-    height: 200px;
+    height: 150px;
     object-fit: cover;
     border-bottom: 1px solid #E6E9F0;
   }
   
   .product-card .content {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   
   .product-card h3 {
     color: #1E2A38;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     margin-bottom: 0.5rem;
   }
   
   .product-card p {
     color: #333333;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
   }
   
   .product-card .btn-select {
@@ -173,8 +190,9 @@ body {
     color: #FFFFFF;
     padding: 0.5rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 500;
+    font-size: 0.9rem;
     text-align: center;
     text-decoration: none;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -186,9 +204,20 @@ body {
     transform: translateY(-2px);
   }
   
+  .product-card .btn-select.disabled {
+    background-color: #E6E9F0;
+    color: #999;
+    cursor: not-allowed;
+  }
+  
+  .product-card .btn-select.disabled:hover {
+    background-color: #E6E9F0;
+    transform: none;
+  }
+  
   /* Review Form (Inside Card) */
   .product-card .review-form {
-    padding: 1.5rem;
+    padding: 1rem;
     background-color: #F7F9FC;
     border-top: 1px solid #E6E9F0;
     display: none;
@@ -200,18 +229,19 @@ body {
   
   .review-form h4 {
     color: #1E2A38;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
     text-align: center;
   }
   
   .review-form .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
   }
   
   .review-form label {
     color: #333333;
     font-weight: 500;
+    font-size: 0.85rem;
     margin-bottom: 0.3rem;
     display: block;
   }
@@ -220,8 +250,8 @@ body {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #E6E9F0;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
     resize: vertical;
     transition: border-color 0.3s ease;
   }
@@ -235,11 +265,11 @@ body {
     display: flex;
     justify-content: center;
     gap: 0.3rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
   }
   
   .review-form .star {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: #E6E9F0;
     cursor: pointer;
     transition: color 0.3s ease;
@@ -253,12 +283,12 @@ body {
   .review-form .thumb-rating {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
   }
   
   .review-form .thumb {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     cursor: pointer;
     transition: color 0.3s ease;
   }
@@ -269,7 +299,7 @@ body {
   
   .review-form .thumb.up.selected,
   .review-form .thumb.up:hover {
-    color: #3A86FF;
+    color: #28A745; /* Verde */
   }
   
   .review-form .thumb.down {
@@ -278,7 +308,7 @@ body {
   
   .review-form .thumb.down.selected,
   .review-form .thumb.down:hover {
-    color: #FF6B6B;
+    color: #DC3545; /* Vermelho */
   }
   
   .review-form .btn-submit {
@@ -288,8 +318,9 @@ body {
     color: #FFFFFF;
     padding: 0.5rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 500;
+    font-size: 0.9rem;
     text-transform: uppercase;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -308,32 +339,52 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 800px;
     margin: 2rem auto;
+    text-align: center;
   }
   
-  .profile-section h2 {
+  .profile-section .hero {
+    background: linear-gradient(135deg, #3A86FF 0%, #B388EB 100%);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+  }
+  
+  .profile-section .hero h2 {
+    color: #FFFFFF;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-section .token-balance {
+    font-size: 2.5rem;
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+  
+  .profile-section .token-balance span {
+    color: #FFD166;
+  }
+  
+  .profile-section .btn-container {
+    margin-top: 1.5rem;
+  }
+  
+  .profile-section h3 {
     color: #1E2A38;
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
   }
   
-  .profile-section .token-balance {
-    font-size: 1.2rem;
-    color: #333333;
-    margin-bottom: 2rem;
-  }
-  
-  .profile-section .token-balance span {
-    color: #3A86FF;
-    font-weight: 700;
-  }
-  
   .profile-section table {
     width: 100%;
     border-collapse: collapse;
+    background-color: #F7F9FC;
+    border-radius: 8px;
+    overflow: hidden;
   }
   
   .profile-section th, .profile-section td {
-    padding: 0.75rem;
+    padding: 1rem;
     text-align: left;
     border-bottom: 1px solid #E6E9F0;
   }
@@ -341,28 +392,33 @@ body {
   .profile-section th {
     color: #1E2A38;
     font-weight: 700;
+    background-color: #E6E9F0;
   }
   
   .profile-section td {
     color: #333333;
   }
   
+  .profile-section .stars {
+    color: #FFD166;
+  }
+  
   .profile-section .thumb-up {
-    color: #3A86FF;
+    color: #28A745; /* Verde */
   }
   
   .profile-section .thumb-down {
-    color: #FF6B6B;
+    color: #DC3545; /* Vermelho */
   }
   
   /* Content */
   .container {
-    padding: 2rem;
+    padding: 1.5rem;
   }
   
   h1 {
     color: #1E2A38;
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   
   /* Responsive Adjustments */
@@ -377,17 +433,32 @@ body {
       flex-direction: column;
       align-items: center;
     }
-    .btn-primary, .btn-secondary {
+    .btn-primary, .btn-secondary, .btn-withdraw {
       width: 100%;
       max-width: 300px;
     }
     .product-card img {
-      height: 150px;
+      height: 120px;
+    }
+    .product-card h3 {
+      font-size: 1.1rem;
+    }
+    .product-card p {
+      font-size: 0.8rem;
     }
     .review-form {
-      padding: 1rem;
+      padding: 0.75rem;
+    }
+    .review-form h4 {
+      font-size: 0.9rem;
     }
     .profile-section {
       padding: 1.5rem;
+    }
+    .profile-section .hero h2 {
+      font-size: 1.5rem;
+    }
+    .profile-section .token-balance {
+      font-size: 2rem;
     }
   }

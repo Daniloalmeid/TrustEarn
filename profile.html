@@ -27,6 +27,9 @@
           <li class="nav-item"><a class="nav-link" href="/submit-product.html">Submit Product</a></li>
           <li class="nav-item"><a class="nav-link" href="/how-it-works.html">How It Works</a></li>
           <li class="nav-item"><a class="nav-link" href="/admin-dashboard.html">Admin</a></li>
+          <li class="nav-item">
+            <button id="connectWallet" class="btn btn-primary ms-2">Connect Wallet</button>
+          </li>
         </ul>
       </div>
     </div>
@@ -34,9 +37,15 @@
   <div class="container">
     <h1>Profile</h1>
     <div class="profile-section">
-      <h2>Your Account</h2>
-      <p class="token-balance">Token Balance: <span id="tokenBalance">0 DET</span></p>
-      <h2>Review History</h2>
+      <div class="hero">
+        <h2>Welcome to Your Profile</h2>
+        <p>Wallet: <span id="walletAddress">Not connected</span></p>
+        <p class="token-balance">Token Balance: <span id="tokenBalance">0 DET</span></p>
+        <div class="btn-container">
+          <button id="withdrawTokens" class="btn-withdraw">Withdraw Tokens</button>
+        </div>
+      </div>
+      <h3>Review History</h3>
       <table>
         <thead>
           <tr>
