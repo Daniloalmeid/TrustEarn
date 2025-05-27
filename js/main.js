@@ -114,72 +114,25 @@ document.addEventListener('DOMContentLoaded', () => {
   function toggleReviewForm(e) {
     e.preventDefault();
     const card = e.target.closest('.product-card');
-    const reviewForm = card.querySelector('.review-form');
     const selectBtn = card.querySelector('.btn-select');
-    if (reviewForm && selectBtn) {
-      reviewForm.classList.toggle('active');
-      selectBtn.textContent = reviewForm.classList.contains('active') ? 'Ocultar Avaliação' : 'Avaliar Produto';
-    }
-  }
-
-  // Update staked tokens
-  function updateStakedTokens() {
-    const stakedTokensElement = document.getElementById('stakedTokens');
-    const stakeReleaseDateElement = document.getElementById('stakeReleaseDate');
-    const stakeRewardsElement = document.getElementById('stakeRewards');
-    if (stakedTokensElement && stakeReleaseDateElement && stakeRewardsElement) {
-      if (!walletAddress) {
-        stakedTokensElement.textContent = '0.00 DET';
-        stakeReleaseDateElement.textContent = 'N/A';
-        stakeRewardsElement.textContent = '0.00 DET';
-        return;
-      }
-
-      const userData = getUserData(walletAddress);
-      const now = new Date();
-      let totalStaked = 0;
-      let latestReleaseDate = null;
-      let totalRewards = 0;
-
-      // Process stakes
-      const updatedStakes = [];
-      userData.stakes.forEach(stake => {
-        const stakeDate = new Date(stake.date);
-        const releaseDate = new Date(stakeDate.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 dias
-        if (isNaN(releaseDate.getTime())) {
-          console.error('Data de stake inválida:', stake.date);
-          return;
-        }
-        if (now >= releaseDate) {
-          // Release stake
-          userData.balance += stake.amount + (stake.amount * 0.5); // +50%
-          console.log(`Stake liberado: ${stake.amount.toFixed(2)} DET + ${(stake.amount * 0.5).toFixed(2)} DET`);
-        } else {
-          updatedStakes.push(stake);
-          totalStaked += stake.amount;
-          totalRewards += stake.amount * 0.5;
-          if (!latestReleaseDate || releaseDate > latestReleaseDate) {
-            latestReleaseDate = releaseDate;
-          }
-        }
-      });
-
-      userData.stakes = updatedStakes;
-      saveUserData(walletAddress, userData);
-
-      stakedTokensElement.textContent = `${totalStaked.toFixed(2)} DET`;
-      stakeReleaseDateElement.textContent = latestReleaseDate ? latestReleaseDate.toLocaleDateString('pt-BR') : 'N/A';
-      stakeRewardsElement.textContent = `${totalRewards.toFixed(2)} DET`;
+    if (card && selectBtn) {
+      card.classList.toggle('review-active');
+      selectBtn.textContent = card.classList.contains('review-active') ? 'Voltar' : 'Avaliar Produto';
     }
   }
 
   // Load products dynamically
   function loadProducts() {
+    console.log("=== Loading Products ===");
     const productList = document.querySelector('.product-list');
-    if (!productList) return;
+    if (!productList) {
+      console.error("Elemento .product-list não encontrado!");
+      return;
+    }
 
-    // Clear existing cards
+    // Clear existing content
     productList.innerHTML = '';
+    console.log("Lista de produtos limpa.");
 
     // Default products
     const defaultProducts = [
@@ -214,55 +167,128 @@ document.addEventListener('DOMContentLoaded', () => {
         category: 'Eletrônicos',
         wallet: 'default',
         timestamp: new Date().toLocaleString('pt-BR')
+      },
+      {
+        name: 'Tênis Esportivo',
+        description: 'Tênis leve e confortável para corridas e atividades ao ar livre.',
+        image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5',
+        category: 'Esportes',
+        wallet: 'default',
+        timestamp: new Date().toLocaleString('pt-BR')
+      },
+      {
+        name: 'Perfume Floral',
+        description: 'Fragrância elegante com notas florais para o dia a dia.',
+        image: 'https://images.unsplash.com/photo-1588515724527-07747c2d5834',
+        category: 'Beleza',
+        wallet: 'default',
+        timestamp: new Date().toLocaleString('pt-BR')
       }
     ];
 
     // Load user-submitted products
-    const userProducts = JSON.parse(localStorage.getItem('products') || '[]');
-    const allProducts = [...defaultProducts, ...userProducts];
+    let userProducts = [];
+    try {
+      userProducts = JSON.parse(localStorage.getItem('products') || '[]');
+      console.log("Produtos do usuário carregados:", userProducts);
+    } catch (error) {
+      console.error("Erro ao carregar produtos do localStorage:", error);
+    }
 
-    // Render products
-    allProducts.forEach((product, index) => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      card.innerHTML = `
-        <img src="${product.image}" alt="${product.name}">
-        <div class="content">
-          <h3>${product.name}</h3>
-          <p>${product.description}</p>
-          <button class="btn-select">Avaliar Produto</button>
-        </div>
-        <div class="review-form">
-          <h4>Avaliar ${product.name}</h4>
-          <form>
-            <div class="form-group">
-              <label for="reviewText${index + 1}">Sua Avaliação</label>
-              <textarea id="reviewText${index + 1}" rows="3" placeholder="Compartilhe suas impressões..." required></textarea>
-            </div>
-            <div class="form-group">
-              <label>Classificação</label>
-              <div class="star-rating">
-                <span class="star" data-value="1">★</span>
-                <span class="star" data-value="2">★</span>
-                <span class="star" data-value="3">★</span>
-                <span class="star" data-value="4">★</span>
-                <span class="star" data-value="5">★</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Sentimento</label>
-              <div class="thumb-rating">
-                <i class="fas fa-thumbs-up thumb up"></i>
-                <i class="fas fa-thumbs-down thumb down"></i>
-              </div>
-            </div>
-            <button type="submit" class="btn-submit">Enviar Avaliação</button>
-          </form>
-        </div>
-      `;
-      productList.appendChild(card);
+    const allProducts = [...defaultProducts, ...userProducts];
+    console.log("Total de produtos a renderizar:", allProducts.length);
+
+    if (allProducts.length === 0) {
+      productList.innerHTML = '<p>Nenhum produto disponível para avaliação.</p>';
+      console.log("Nenhum produto para exibir.");
+      return;
+    }
+
+    // Group products by category
+    const productsByCategory = {};
+    allProducts.forEach(product => {
+      const category = product.category || 'Outros';
+      if (!productsByCategory[category]) {
+        productsByCategory[category] = [];
+      }
+      productsByCategory[category].push(product);
     });
 
+    console.log("Produtos agrupados por categoria:", productsByCategory);
+
+    // Render products by category
+    Object.keys(productsByCategory).sort().forEach((category, catIndex) => {
+      console.log(`Renderizando categoria: ${category}`);
+      const categorySection = document.createElement('div');
+      categorySection.className = 'category-section';
+      categorySection.id = `category-${catIndex}`; // ID único para cada seção
+
+      const categoryTitle = document.createElement('h2');
+      categoryTitle.className = 'category-title';
+      categoryTitle.textContent = category;
+      categorySection.appendChild(categoryTitle);
+
+      const productGrid = document.createElement('div');
+      productGrid.className = 'product-grid';
+      categorySection.appendChild(productGrid);
+
+      productsByCategory[category].forEach((product, index) => {
+        console.log(`Renderizando produto: ${product.name}`);
+        const globalIndex = allProducts.indexOf(product); // Índice único para o formulário
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <div class="content">
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+            <span class="read-more">Ler mais</span>
+            <button class="btn-select">Avaliar Produto</button>
+          </div>
+          <div class="review-form">
+            <h4>Avaliar ${product.name}</h4>
+            <form>
+              <div class="form-group">
+                <label for="reviewText${globalIndex + 1}">Sua Avaliação</label>
+                <textarea id="reviewText${globalIndex + 1}" rows="3" placeholder="Compartilhe suas impressões..." required></textarea>
+              </div>
+              <div class="form-group">
+                <label>Classificação</label>
+                <div class="star-rating">
+                  <span class="star" data-value="1">★</span>
+                  <span class="star" data-value="2">★</span>
+                  <span class="star" data-value="3">★</span>
+                  <span class="star" data-value="4">★</span>
+                  <span class="star" data-value="5">★</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Sentimento</label>
+                <div class="thumb-rating">
+                  <i class="fas fa-thumbs-up thumb up"></i>
+                  <i class="fas fa-thumbs-down thumb down"></i>
+                </div>
+              </div>
+              <button type="submit" class="btn-submit">Enviar Avaliação</button>
+            </form>
+          </div>
+        `;
+        productGrid.appendChild(card);
+
+        // Add event listener for "Ler mais"
+        const readMore = card.querySelector('.read-more');
+        readMore.addEventListener('click', () => {
+          const description = card.querySelector('p');
+          const isExpanded = description.classList.toggle('expanded');
+          readMore.textContent = isExpanded ? 'Ler menos' : 'Ler mais';
+          console.log(`Descrição do produto ${product.name} ${isExpanded ? 'expandida' : 'recolhida'}`);
+        });
+      });
+
+      productList.appendChild(categorySection);
+    });
+
+    console.log("Produtos renderizados com sucesso.");
     // Reattach event listeners
     checkReviewedProducts();
     attachReviewFormListeners();
@@ -272,10 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function attachReviewFormListeners() {
     const productCards = document.querySelectorAll('.product-card');
     productCards.forEach(card => {
-      const selectBtn = card.querySelector('.btn-select');
       const reviewForm = card.querySelector('.review-form');
       const form = reviewForm ? reviewForm.querySelector('form') : null;
-      if (!form || !selectBtn) return;
+      if (!form) return;
 
       // Star Rating
       const stars = form.querySelectorAll('.star');
@@ -368,10 +393,11 @@ document.addEventListener('DOMContentLoaded', () => {
         form.reset();
         stars.forEach(s => s.classList.remove('selected'));
         thumbs.forEach(t => t.classList.remove('selected'));
-        reviewForm.classList.remove('active');
-        selectBtn.textContent = '✓ Já Avaliado';
+        const selectBtn = card.querySelector('.btn-select');
         selectBtn.classList.add('disabled');
+        selectBtn.textContent = '✓ Já Avaliado';
         selectBtn.removeEventListener('click', toggleReviewForm);
+        card.classList.remove('review-active'); // Volta ao estado inicial
 
         updateStakedTokens();
         updateProfilePage();
@@ -379,8 +405,56 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Product Review Forms
-  attachReviewFormListeners();
+  // Update staked tokens
+  function updateStakedTokens() {
+    const stakedTokensElement = document.getElementById('stakedTokens');
+    const stakeReleaseDateElement = document.getElementById('stakeReleaseDate');
+    const stakeRewardsElement = document.getElementById('stakeRewards');
+    if (stakedTokensElement && stakeReleaseDateElement && stakeRewardsElement) {
+      if (!walletAddress) {
+        stakedTokensElement.textContent = '0.00 DET';
+        stakeReleaseDateElement.textContent = 'N/A';
+        stakeRewardsElement.textContent = '0.00 DET';
+        return;
+      }
+
+      const userData = getUserData(walletAddress);
+      const now = new Date();
+      let totalStaked = 0;
+      let latestReleaseDate = null;
+      let totalRewards = 0;
+
+      // Process stakes
+      const updatedStakes = [];
+      userData.stakes.forEach(stake => {
+        const stakeDate = new Date(stake.date);
+        const releaseDate = new Date(stakeDate.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 dias
+        if (isNaN(releaseDate.getTime())) {
+          console.error('Data de stake inválida:', stake.date);
+          return;
+        }
+        if (now >= releaseDate) {
+          // Release stake
+          userData.balance += stake.amount + (stake.amount * 0.5); // +50%
+          console.log(`Stake liberado: ${stake.amount.toFixed(2)} DET + ${(stake.amount * 0.5).toFixed(2)} DET`);
+        } else {
+          updatedStakes.push(stake);
+          totalStaked += stake.amount;
+          totalRewards += stake.amount * 0.5;
+          if (!latestReleaseDate || releaseDate > latestReleaseDate) {
+            latestReleaseDate = releaseDate;
+          }
+        }
+      });
+
+      userData.stakes = updatedStakes;
+      saveUserData(walletAddress, userData);
+
+      stakedTokensElement.textContent = `${totalStaked.toFixed(2)} DET`;
+      stakeReleaseDateElement.textContent = latestReleaseDate ? latestReleaseDate.toLocaleDateString('pt-BR') : 'N/A';
+      stakeRewardsElement.textContent = `${totalRewards.toFixed(2)} DET`;
+    }
+  }
 
   // Update Profile Page
   function updateProfilePage() {
@@ -449,6 +523,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (!description || description.length < 10) {
         showMessage('A descrição deve ter pelo menos 10 caracteres.', 'error');
+        return;
+      }
+      if (description.length > 500) {
+        showMessage('A descrição não pode exceder 500 caracteres.', 'error');
         return;
       }
       if (!image) {
