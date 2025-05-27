@@ -1,0 +1,5 @@
+flask==2.3.2
+solders==0.10.0
+pillow==10.0.0
+transformers==4.35.0
+torch==2.0.0
