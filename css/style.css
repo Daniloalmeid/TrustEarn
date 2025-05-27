@@ -141,6 +141,58 @@ body {
     transform: translate(-50%, -50%) scale(1);
   }
   
+  .btn-select {
+    display: block;
+    width: 100%;
+    background-color: #3A86FF;
+    color: #FFFFFF;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .btn-select:hover {
+    background-color: #2A6EE6;
+    transform: translateY(-2px);
+  }
+  
+  .btn-select.disabled {
+    background-color: #E6E9F0;
+    color: #999;
+    cursor: not-allowed;
+  }
+  
+  .btn-select.disabled:hover {
+    background-color: #E6E9F0;
+    transform: none;
+  }
+  
+  .btn-submit {
+    display: block;
+    width: 100%;
+    background-color: #3A86FF;
+    color: #FFFFFF;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .btn-submit:hover {
+    background-color: #2A6EE6;
+    transform: translateY(-2px);
+  }
+  
   /* Hero Section */
   .hero {
     text-align: center;
@@ -211,38 +263,6 @@ body {
     margin-bottom: 0.75rem;
   }
   
-  .product-card .btn-select {
-    display: block;
-    width: 100%;
-    background-color: #3A86FF;
-    color: #FFFFFF;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.9rem;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    cursor: pointer;
-  }
-  
-  .product-card .btn-select:hover {
-    background-color: #2A6EE6;
-    transform: translateY(-2px);
-  }
-  
-  .product-card .btn-select.disabled {
-    background-color: #E6E9F0;
-    color: #999;
-    cursor: not-allowed;
-  }
-  
-  .product-card .btn-select.disabled:hover {
-    background-color: #E6E9F0;
-    transform: none;
-  }
-  
   /* Review Form (Inside Card) */
   .product-card .review-form {
     padding: 1rem;
@@ -274,19 +294,28 @@ body {
     display: block;
   }
   
-  .review-form textarea {
+  .review-form input[type="text"],
+  .review-form input[type="url"],
+  .review-form textarea,
+  .review-form select {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #E6E9F0;
     border-radius: 6px;
     font-size: 0.85rem;
-    resize: vertical;
     transition: border-color 0.3s ease;
   }
   
-  .review-form textarea:focus {
+  .review-form input[type="text"]:focus,
+  .review-form input[type="url"]:focus,
+  .review-form textarea:focus,
+  .review-form select:focus {
     border-color: #3A86FF;
     outline: none;
+  }
+  
+  .review-form textarea {
+    resize: vertical;
   }
   
   .review-form .star-rating {
@@ -337,26 +366,6 @@ body {
   .review-form .thumb.down.selected,
   .review-form .thumb.down:hover {
     color: #DC3545; /* Vermelho */
-  }
-  
-  .review-form .btn-submit {
-    display: block;
-    width: 100%;
-    background-color: #3A86FF;
-    color: #FFFFFF;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .review-form .btn-submit:hover {
-    background-color: #2A6EE6;
-    transform: translateY(-2px);
   }
   
   /* Profile Section */
@@ -544,6 +553,104 @@ body {
     color: #DC3545; /* Vermelho */
   }
   
+  /* Submit Product Section */
+  .submit-product-section {
+    background-color: #FFFFFF;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    max-width: 600px;
+    margin: 2.5rem auto;
+    text-align: left;
+    border: 1px solid #E6E9F0;
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .submit-product-section h2 {
+    color: #1E2A38;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .submit-product-section .form-group {
+    margin-bottom: 1.2rem;
+  }
+  
+  .submit-product-section label {
+    color: #333333;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+  
+  .submit-product-section input[type="text"],
+  .submit-product-section input[type="url"],
+  .submit-product-section textarea,
+  .submit-product-section select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #E6E9F0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .submit-product-section input[type="text"]:focus,
+  .submit-product-section input[type="url"]:focus,
+  .submit-product-section textarea:focus,
+  .submit-product-section select:focus {
+    border-color: #3A86FF;
+    box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.1);
+    outline: none;
+  }
+  
+  .submit-product-section textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .submit-product-section .btn-submit {
+    width: 100%;
+    background-color: #3A86FF;
+    color: #FFFFFF;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(58, 134, 255, 0.3);
+  }
+  
+  .submit-product-section .btn-submit:hover {
+    background-color: #2A6EE6;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(58, 134, 255, 0.4);
+  }
+  
+  .submit-product-section .message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  
+  .submit-product-section .message.success {
+    background-color: #28A745;
+    color: #FFFFFF;
+  }
+  
+  .submit-product-section .message.error {
+    background-color: #DC3545;
+    color: #FFFFFF;
+  }
+  
   /* Content */
   .container {
     padding: 2rem;
@@ -609,5 +716,12 @@ body {
     .profile-section table td {
       padding: 0.8rem;
       font-size: 0.9rem;
+    }
+    .submit-product-section {
+      padding: 2rem;
+      margin: 1.5rem auto;
+    }
+    .submit-product-section h2 {
+      font-size: 1.8rem;
     }
   }
