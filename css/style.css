@@ -250,6 +250,37 @@ body {
     color: #FFD166;
   }
   
+  .review-form .thumb-rating {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .review-form .thumb {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .review-form .thumb.up {
+    color: #E6E9F0;
+  }
+  
+  .review-form .thumb.up.selected,
+  .review-form .thumb.up:hover {
+    color: #3A86FF;
+  }
+  
+  .review-form .thumb.down {
+    color: #E6E9F0;
+  }
+  
+  .review-form .thumb.down.selected,
+  .review-form .thumb.down:hover {
+    color: #FF6B6B;
+  }
+  
   .review-form .btn-submit {
     display: block;
     width: 100%;
@@ -267,6 +298,61 @@ body {
   .review-form .btn-submit:hover {
     background-color: #2A6EE6;
     transform: translateY(-2px);
+  }
+  
+  /* Profile Section */
+  .profile-section {
+    background-color: #FFFFFF;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 2rem auto;
+  }
+  
+  .profile-section h2 {
+    color: #1E2A38;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .profile-section .token-balance {
+    font-size: 1.2rem;
+    color: #333333;
+    margin-bottom: 2rem;
+  }
+  
+  .profile-section .token-balance span {
+    color: #3A86FF;
+    font-weight: 700;
+  }
+  
+  .profile-section table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .profile-section th, .profile-section td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #E6E9F0;
+  }
+  
+  .profile-section th {
+    color: #1E2A38;
+    font-weight: 700;
+  }
+  
+  .profile-section td {
+    color: #333333;
+  }
+  
+  .profile-section .thumb-up {
+    color: #3A86FF;
+  }
+  
+  .profile-section .thumb-down {
+    color: #FF6B6B;
   }
   
   /* Content */
@@ -300,5 +386,8 @@ body {
     }
     .review-form {
       padding: 1rem;
+    }
+    .profile-section {
+      padding: 1.5rem;
     }
   }
