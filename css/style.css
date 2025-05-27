@@ -100,17 +100,18 @@ body {
     background-color: #FFD166;
     border: none;
     color: #333333;
-    font-weight: 500;
+    font-weight: 600;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
     text-transform: uppercase;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   }
   
   .btn-withdraw:hover {
     background-color: #FFC107;
     transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
   }
   
   /* Hero Section */
@@ -334,31 +335,57 @@ body {
   /* Profile Section */
   .profile-section {
     background-color: #FFFFFF;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
     margin: 2rem auto;
     text-align: center;
+    border: 1px solid #E6E9F0;
   }
   
   .profile-section .hero {
     background: linear-gradient(135deg, #3A86FF 0%, #B388EB 100%);
-    padding: 2rem;
+    padding: 2.5rem;
     border-radius: 12px;
     margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .profile-section .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+    opacity: 0.5;
   }
   
   .profile-section .hero h2 {
     color: #FFFFFF;
-    font-size: 2rem;
+    font-size: 2.2rem;
+    font-weight: 600;
     margin-bottom: 1rem;
+    position: relative;
+  }
+  
+  .profile-section .hero .wallet-address {
+    color: #FFFFFF;
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+    word-break: break-all;
+    position: relative;
   }
   
   .profile-section .token-balance {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: #FFFFFF;
     font-weight: 700;
+    position: relative;
   }
   
   .profile-section .token-balance span {
@@ -367,19 +394,50 @@ body {
   
   .profile-section .btn-container {
     margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .profile-section .stake-info {
+    background-color: #F7F9FC;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .profile-section .stake-info h3 {
+    color: #1E2A38;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-section .stake-info p {
+    color: #333333;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .profile-section .stake-info .icon {
+    color: #3A86FF;
+    margin-right: 0.5rem;
   }
   
   .profile-section h3 {
     color: #1E2A38;
     font-size: 1.8rem;
+    font-weight: 600;
     margin-bottom: 1.5rem;
   }
   
   .profile-section table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background-color: #F7F9FC;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
   }
   
@@ -455,10 +513,16 @@ body {
     .profile-section {
       padding: 1.5rem;
     }
+    .profile-section .hero {
+      padding: 2rem;
+    }
     .profile-section .hero h2 {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
     }
     .profile-section .token-balance {
-      font-size: 2rem;
+      font-size: 2.2rem;
+    }
+    .profile-section .stake-info {
+      padding: 1rem;
     }
   }

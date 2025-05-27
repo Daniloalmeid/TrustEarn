@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize wallet state
   let walletAddress = localStorage.getItem('walletAddress') || null;
   updateWalletUI();
+  updateStakedTokens();
 
   // Update wallet UI across pages
   function updateWalletUI() {
@@ -13,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (walletAddress) {
         connectWalletBtn.textContent = 'Disconnect';
         connectWalletBtn.classList.add('connected');
-        connectWalletBtn.classList.add('btn-secondary'); // Estilo de desconexão
+        connectWalletBtn.classList.add('btn-secondary');
         connectWalletBtn.classList.remove('btn-primary');
       } else {
         connectWalletBtn.textContent = 'Connect Wallet';
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasReviewed = reviews.some(review => review.wallet === walletAddress && review.product === productName);
       if (hasReviewed) {
         selectBtn.classList.add('disabled');
-        selectBtn.textContent = 'Already Reviewed';
+        selectBtn.textContent = '✓ Already Reviewed';
         selectBtn.removeEventListener('click', toggleReviewForm);
       } else {
         selectBtn.classList.remove('disabled');
@@ -87,6 +88,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectBtn = card.querySelector('.btn-select');
     reviewForm.classList.toggle('active');
     selectBtn.textContent = reviewForm.classList.contains('active') ? 'Hide Review' : 'Review This Product';
+  }
+
+  // Update Staked Tokens
+  function updateStakedTokens() {
+    const stakedTokensElement = document.getElementById('stakedTokens');
+    const stakeReleaseDateElement = document.getElementById('stakeReleaseDate');
+    const stakeRewardsElement = document.getElementById('stakeRewards');
+    if (stakedTokensElement && stakeReleaseDateElement && stakeRewardsElement) {
+      const stakes = JSON.parse(localStorage.getItem('stakes') || '[]');
+      const now = new Date();
+      let totalStaked = 0;
+      let latestReleaseDate = null;
+      let totalRewards = 0;
+
+      // Process stakes
+      const updatedStakes = [];
+      stakes.forEach(stake => {
+        const stakeDate = new Date(stake.date);
+        const releaseDate = new Date(stakeDate.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 dias
+        if (now >= releaseDate) {
+          // Release stake
+          let tokenBalance = parseInt(localStorage.getItem('tokenBalance') || '0');
+          const rewards = stake.amount * 0.5; // 50% em 3 meses
+          tokenBalance += stake.amount + rewards;
+          localStorage.setItem('tokenBalance', JSON.stringify(tokenBalance));
+        } else {
+          updatedStakes.push(stake);
+          totalStaked += stake.amount;
+          totalRewards += stake.amount * 0.5;
+          if (!latestReleaseDate || releaseDate > latestReleaseDate) {
+            latestReleaseDate = releaseDate;
+          }
+        }
+      });
+
+      localStorage.setItem('stakes', JSON.stringify(updatedStakes));
+
+      stakedTokensElement.textContent = `${totalStaked.toFixed(2)} DET`;
+      stakeReleaseDateElement.textContent = latestReleaseDate ? latestReleaseDate.toLocaleDateString() : 'N/A';
+      stakeRewardsElement.textContent = `${totalRewards.toFixed(2)} DET`;
+    }
   }
 
   // Product Review Forms
@@ -143,6 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Simulate token reward
         const tokensEarned = 10; // 10 DET per review
+        const stakeAmount = tokensEarned * 0.1; // 10% para stake
+        const availableTokens = tokensEarned - stakeAmount; // 90% para saldo
+
+        // Store review
         const reviewData = {
           wallet: walletAddress,
           product: productName,
@@ -152,24 +198,32 @@ document.addEventListener('DOMContentLoaded', () => {
           tokens: tokensEarned,
           timestamp: new Date().toLocaleString()
         };
-
-        // Store review
         reviews.push(reviewData);
         localStorage.setItem('reviews', JSON.stringify(reviews));
 
         // Update token balance
         let tokenBalance = parseInt(localStorage.getItem('tokenBalance') || '0');
-        tokenBalance += tokensEarned;
-        localStorage.setItem('tokenBalance', tokenBalance);
+        tokenBalance += availableTokens;
+        localStorage.setItem('tokenBalance', JSON.stringify(tokenBalance));
 
-        alert(`Review submitted for ${productName}!\nRating: ${selectedStars} stars\nSentiment: ${thumbType}\nReview: ${reviewText}\nTokens Earned: ${tokensEarned} DET`);
+        // Store stake
+        const stakes = JSON.parse(localStorage.getItem('stakes') || '[]');
+        stakes.push({
+          amount: stakeAmount,
+          date: new Date().toISOString()
+        });
+        localStorage.setItem('stakes', JSON.stringify(stakes));
+
+        alert(`Review submitted for ${productName}!\nRating: ${selectedStars} stars\nSentiment: ${thumbType}\nReview: ${reviewText}\nTokens Earned: ${tokensEarned} DET\nStaked: ${stakeAmount.toFixed(2)} DET (90 days, 50% return)`);
         form.reset();
         stars.forEach(s => s.classList.remove('selected'));
         thumbs.forEach(t => t.classList.remove('selected'));
         reviewForm.classList.remove('active');
-        selectBtn.textContent = 'Already Reviewed';
+        selectBtn.textContent = '✓ Already Reviewed';
         selectBtn.classList.add('disabled');
         selectBtn.removeEventListener('click', toggleReviewForm);
+
+        updateStakedTokens();
       } else {
         alert('Please provide a review, select a star rating, and choose a sentiment (thumbs up or down).');
       }
@@ -183,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tokenBalanceElement && reviewHistoryElement && walletAddressElement) {
     walletAddressElement.textContent = walletAddress || 'Not connected';
     const tokenBalance = localStorage.getItem('tokenBalance') || '0';
-    tokenBalanceElement.textContent = `${tokenBalance} DET`;
+    tokenBalanceElement.textContent = `${parseFloat(tokenBalance).toFixed(2)} DET`;
 
     const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
     const userReviews = walletAddress ? reviews.filter(review => review.wallet === walletAddress) : [];
