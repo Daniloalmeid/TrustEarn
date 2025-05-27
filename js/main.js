@@ -23,27 +23,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Product Selection
+  // Product Review Forms
   const productCards = document.querySelectorAll('.product-card');
-  const reviewForm = document.getElementById('reviewForm');
-  const reviewFormTitle = document.querySelector('.review-form h2');
-  let selectedProduct = '';
+  productCards.forEach(card => {
+    const selectBtn = card.querySelector('.btn-select');
+    const reviewForm = card.querySelector('.review-form');
+    const stars = reviewForm.querySelectorAll('.star');
+    const form = reviewForm.querySelector('form');
+    const productName = card.querySelector('h3').textContent;
 
-  if (productCards.length > 0 && reviewForm) {
-    productCards.forEach(card => {
-      card.addEventListener('click', () => {
-        selectedProduct = card.querySelector('h3').textContent;
-        reviewFormTitle.textContent = `Review ${selectedProduct}`;
-        reviewForm.classList.add('active');
-        // Scroll to form
-        reviewForm.scrollIntoView({ behavior: 'smooth' });
-      });
+    // Toggle Review Form
+    selectBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      reviewForm.classList.toggle('active');
+      selectBtn.textContent = reviewForm.classList.contains('active') ? 'Hide Review' : 'Review This Product';
     });
-  }
 
-  // Star Rating
-  const stars = document.querySelectorAll('.star');
-  if (stars.length > 0) {
+    // Star Rating
     stars.forEach(star => {
       star.addEventListener('click', () => {
         const rating = star.getAttribute('data-value');
@@ -56,23 +52,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     });
-  }
 
-  // Review Form Submission
-  if (reviewForm) {
-    reviewForm.addEventListener('submit', (e) => {
+    // Review Form Submission
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const reviewText = document.getElementById('reviewText').value;
-      const selectedStars = document.querySelectorAll('.star.selected').length;
-      if (reviewText && selectedStars > 0 && selectedProduct) {
-        alert(`Review submitted for ${selectedProduct}!\nRating: ${selectedStars} stars\nReview: ${reviewText}`);
-        reviewForm.reset();
+      const reviewText = form.querySelector('textarea').value;
+      const selectedStars = reviewForm.querySelectorAll('.star.selected').length;
+      if (reviewText && selectedStars > 0) {
+        alert(`Review submitted for ${productName}!\nRating: ${selectedStars} stars\nReview: ${reviewText}`);
+        form.reset();
         stars.forEach(s => s.classList.remove('selected'));
         reviewForm.classList.remove('active');
-        selectedProduct = '';
+        selectBtn.textContent = 'Review This Product';
       } else {
-        alert('Please select a product, provide a review, and select a rating.');
+        alert('Please provide a review and select a rating.');
       }
     });
-  }
+  });
 });
