@@ -23,11 +23,19 @@ body {
     font-size: 1.5rem;
     font-weight: 700;
     text-decoration: none;
+    display: flex;
+    align-items: center;
     transition: color 0.3s ease;
   }
   
   .navbar-brand:hover {
     color: #B388EB !important;
+  }
+  
+  .navbar-brand .icon {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+    color: #3A86FF;
   }
   
   .nav-link {
@@ -59,6 +67,16 @@ body {
   .btn-primary:hover {
     background-color: #2A6EE6;
     transform: translateY(-2px);
+  }
+  
+  .btn-primary.connected {
+    background-color: #28A745;
+    cursor: default;
+  }
+  
+  .btn-primary.connected:hover {
+    background-color: #218838;
+    transform: none;
   }
   
   .btn-secondary {
@@ -104,6 +122,156 @@ body {
     gap: 1rem;
   }
   
+  /* Product Cards */
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+  }
+  
+  .product-card {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .product-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #E6E9F0;
+  }
+  
+  .product-card .content {
+    padding: 1.5rem;
+  }
+  
+  .product-card h3 {
+    color: #1E2A38;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .product-card p {
+    color: #333333;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .product-card .btn-select {
+    display: block;
+    width: 100%;
+    background-color: #3A86FF;
+    color: #FFFFFF;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .product-card .btn-select:hover {
+    background-color: #2A6EE6;
+    transform: translateY(-2px);
+  }
+  
+  /* Review Form */
+  .review-form {
+    background-color: #FFFFFF;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 2rem auto;
+    display: none; /* Hidden by default */
+  }
+  
+  .review-form.active {
+    display: block;
+  }
+  
+  .review-form h2 {
+    color: #1E2A38;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .review-form .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .review-form label {
+    color: #333333;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  .review-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #E6E9F0;
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+  }
+  
+  .review-form textarea:focus {
+    border-color: #3A86FF;
+    outline: none;
+  }
+  
+  .review-form .star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .review-form .star {
+    font-size: 1.5rem;
+    color: #E6E9F0;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .review-form .star.selected,
+  .review-form .star:hover {
+    color: #FFD166;
+  }
+  
+  .review-form .btn-submit {
+    display: block;
+    width: 100%;
+    background-color: #3A86FF;
+    color: #FFFFFF;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .review-form .btn-submit:hover {
+    background-color: #2A6EE6;
+    transform: translateY(-2px);
+  }
+  
   /* Content */
   .container {
     padding: 2rem;
@@ -129,5 +297,11 @@ body {
     .btn-primary, .btn-secondary {
       width: 100%;
       max-width: 300px;
+    }
+    .review-form {
+      padding: 1.5rem;
+    }
+    .product-card img {
+      height: 150px;
     }
   }
