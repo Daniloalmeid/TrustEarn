@@ -8,20 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
   updateStakedTokens();
   updateProfilePage();
   loadProducts();
+  updateRankingList();
 
   // Update wallet UI across pages
   function updateWalletUI() {
     console.log("Atualizando UI da carteira...");
-    const connectWalletBtn = document.getElementById('connectWallet');
-    if (connectWalletBtn) {
+    const walletBtn = document.getElementById('connectWallet');
+    if (walletBtn) {
       if (walletAddress) {
-        connectWalletBtn.textContent = 'Desconectar';
-        connectWalletBtn.classList.add('connected', 'btn-secondary');
-        connectWalletBtn.classList.remove('btn-primary');
+        walletBtn.textContent = 'Desconectar';
+        walletBtn.classList.add('connected', 'btn-secondary');
+        walletBtn.classList.remove('btn-primary');
       } else {
-        connectWalletBtn.textContent = 'Conectar Carteira';
-        connectWalletBtn.classList.remove('connected', 'btn-secondary');
-        connectWalletBtn.classList.add('btn-primary');
+        walletBtn.textContent = 'Conectar Carteira';
+        walletBtn.classList.remove('connected', 'btn-secondary');
+        walletBtn.classList.add('btn-primary');
       }
       checkReviewedProducts();
     }
@@ -40,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('walletsData', JSON.stringify(walletsData));
   }
 
-  // Clear wallet address without deleting user data
+  // Clear wallet address
   function clearWalletAddress() {
     localStorage.removeItem('walletAddress');
   }
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'X-RapidAPI-Host': 'twinword-sentiment-analysis.p.rapidapi.com'
         },
         body: new URLSearchParams({
-          text: reviewText // Requer texto em inglês
+          text: reviewText
         })
       });
 
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Resposta da Twinword:', result);
       const score = result.score;
       const type = result.type;
-      const isValid = score >= -0.3 && type !== 'negative'; // Aceita neutro ou positivo, rejeita muito negativo
+      const isValid = score >= -0.3 && type !== 'negative';
       if (!isValid) {
         console.log('Avaliação inválida:', { score, type });
       }
@@ -105,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateWalletUI();
         updateStakedTokens();
         updateProfilePage();
+        updateRankingList();
       } else {
         if (typeof window.solana !== 'undefined' && window.solana.isPhantom) {
           window.solana.connect()
@@ -122,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
               updateWalletUI();
               updateStakedTokens();
               updateProfilePage();
+              updateRankingList();
             })
             .catch((err) => {
               console.error('Erro ao conectar:', err);
@@ -179,10 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
     productList.innerHTML = '';
     console.log("Lista de produtos limpa.");
 
-    // Default products (removidos)
-    const defaultProducts = [];
-
-    // Load user products
     let userProducts = [];
     try {
       userProducts = JSON.parse(localStorage.getItem('products') || '[]');
@@ -199,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Group by category
     const categories = {};
     allProducts.forEach(product => {
       if (!categories[product.category]) {
@@ -210,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log("Categorias encontradas:", Object.keys(categories));
 
-    // Render products by category
     Object.keys(categories).forEach(category => {
       console.log(`Renderizando categoria: ${category}`);
       const categorySection = document.createElement('div');
@@ -233,14 +230,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>${product.description}</p>
             <span class="review-count"><i class="fas fa-star"></i> ${reviewCount} Avaliação${reviewCount !== 1 ? 'ões' : ''}</span>
             <span class="read-more">Ler mais</span>
-            <button class="btn-select">Avaliar Produto</button>
+            <button class="btn-select">Enviar Avaliação</button>
           </div>
           <div class="review-form">
             <h4>Avaliar ${product.name}</h4>
             <form>
               <div class="form-group">
                 <label for="reviewText${category}_${index}">Sua Avaliação (em inglês)</label>
-                <textarea id="reviewText${category}_${index}" rows="3" placeholder="Share your feedback in English..." required></textarea>
+                <textarea id="reviewText${category}_${index}" rows="2" placeholder="Share your feedback in English..." required></textarea>
               </div>
               <div class="form-group">
                 <label>Classificação</label>
@@ -265,7 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         grid.appendChild(card);
 
-        // "Ler mais" handler
         const readMore = card.querySelector('.read-more');
         readMore.addEventListener('click', () => {
           const description = card.querySelector('p');
@@ -276,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    console.log("Renderização concluída.");
     checkReviewedProducts();
     attachReviewFormListeners();
   }
@@ -288,7 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const reviewForm = card.querySelector('.review-form form');
       if (!reviewForm) return;
 
-      // Star rating
       const stars = reviewForm.querySelectorAll('.star');
       stars.forEach(star => {
         star.addEventListener('click', () => {
@@ -299,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
 
-      // Thumb rating
       const thumbs = reviewForm.querySelectorAll('.thumb');
       thumbs.forEach(thumb => {
         thumb.addEventListener('click', () => {
@@ -308,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
 
-      // Form submission
       reviewForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!walletAddress) {
@@ -341,7 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        // Validação via Twinword (Commented out)
         /*
         const isValid = await validateReviewWithAI(reviewText);
         if (!isValid) {
@@ -378,12 +369,13 @@ document.addEventListener('DOMContentLoaded', () => {
         thumbs.forEach(t => t.classList.remove('selected'));
         const selectBtn = card.querySelector('.btn-select');
         selectBtn.classList.add('disabled');
-        selectBtn.textContent = '✓ Já Avaliado';
+        selectBtn.textContent = '✓ Selecionado!';
         selectBtn.removeEventListener('click', toggleReviewForm);
         card.classList.remove('review-active');
         loadProducts();
         updateStakedTokens();
         updateProfilePage();
+        updateRankingList();
       });
     });
   }
@@ -474,11 +466,96 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Update Ranking List
+  function updateRankingList() {
+    const rankingListElement = document.getElementById('rankingList');
+    const totalReviewsElement = document.getElementById('totalReviews');
+    const totalTokensElement = document.getElementById('totalTokens');
+    const userRankingElement = document.getElementById('userRanking');
+    const rankingSortElement = document.getElementById('rankingSort');
+
+    if (!rankingListElement) return;
+
+    const walletsData = JSON.parse(localStorage.getItem('walletsData') || '{}');
+    let ranking = Object.keys(walletsData)
+      .map(wallet => {
+        const userData = walletsData[wallet];
+        const totalTokens = userData.reviews.reduce((sum, review) => sum + (review.tokens || 0), 0);
+        return {
+          wallet,
+          reviews: userData.reviews.length,
+          totalTokens
+        };
+      });
+
+    // Calculate community stats
+    let totalReviews = 0;
+    let totalTokens = 0;
+    ranking.forEach(user => {
+      totalReviews += user.reviews;
+      totalTokens += user.totalTokens;
+    });
+
+    if (totalReviewsElement) totalReviewsElement.textContent = totalReviews;
+    if (totalTokensElement) totalTokensElement.textContent = `${totalTokens.toFixed(2)} DET`;
+
+    // Sort ranking based on filter
+    const sortBy = rankingSortElement ? rankingSortElement.value : 'reviews';
+    ranking.sort((a, b) => {
+      if (sortBy === 'tokens') {
+        return b.totalTokens - a.totalTokens || b.reviews - a.reviews;
+      }
+      return b.reviews - a.reviews || b.totalTokens - a.totalTokens;
+    });
+
+    // Update user ranking
+    if (userRankingElement) {
+      if (!walletAddress) {
+        userRankingElement.textContent = 'Conecte sua carteira para ver sua posição no ranking!';
+        userRankingElement.classList.remove('current-user');
+      } else {
+        const userRank = ranking.findIndex(user => user.wallet === walletAddress) + 1;
+        if (userRank > 0) {
+          userRankingElement.textContent = `Você está em ${userRank}º lugar com ${ranking[userRank - 1].reviews} avaliações e ${ranking[userRank - 1].totalTokens.toFixed(2)} DET!`;
+          userRankingElement.classList.add('current-user');
+        } else {
+          userRankingElement.textContent = 'Você ainda não está no ranking. Comece a avaliar!';
+          userRankingElement.classList.remove('current-user');
+        }
+      }
+    }
+
+    // Update ranking table
+    rankingListElement.innerHTML = '';
+    if (ranking.length === 0) {
+      rankingListElement.innerHTML = '<tr><td colspan="4">Nenhum usuário no ranking ainda.</td></tr>';
+      return;
+    }
+
+    ranking.slice(0, 10).forEach((user, index) => {
+      const maskedWallet = `${user.wallet.slice(0, 6)}...${user.wallet.slice(-4)}`;
+      const row = document.createElement('tr');
+      row.className = index === 0 ? 'top-1' : index === 1 ? 'top-2' : index === 2 ? 'top-3' : '';
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${maskedWallet}</td>
+        <td>${user.reviews}</td>
+        <td>${user.totalTokens.toFixed(2)} DET</td>
+      `;
+      rankingListElement.appendChild(row);
+    });
+
+    // Add filter listener
+    if (rankingSortElement) {
+      rankingSortElement.addEventListener('change', updateRankingList);
+    }
+  }
+
   // Withdraw Button
   const withdrawBtn = document.getElementById('withdrawTokens');
   if (withdrawBtn) {
     withdrawBtn.addEventListener('click', () => {
-      alert('Saques estarão disponíveis em breve! Fique ligado para atualizações.');
+      alert('Saques estarão disponíveis em breve!');
     });
   }
 
@@ -565,7 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
         new URL(url);
         const img = new Image();
         img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
+        img.onerror = () => resolve();
         img.src = url;
         setTimeout(() => resolve(false), 3000);
       } catch (_) {

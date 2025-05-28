@@ -791,6 +791,94 @@ body {
     font-weight: 600;
 }
 
+/* Ranking Section */
+.ranking-stats {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.ranking-stats p {
+    color: #333333;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.ranking-stats p strong {
+    color: #1E2A38;
+}
+
+.ranking-stats p span {
+    color: #3A86FF;
+}
+
+.user-ranking {
+    background-color: #F7F9FC;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1E2A38;
+}
+
+.user-ranking.current-user {
+    background-color: #FFD166;
+    color: #1E2A38;
+    box-shadow: 0 4px 8px rgba(255, 209, 102, 0.3);
+}
+
+.ranking-filter {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.ranking-filter label {
+    color: #333333;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-right: 0.5rem;
+}
+
+.ranking-filter select {
+    padding: 0.5rem;
+    border: 1px solid #E6E9F0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background-color: #FFFFFF;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.ranking-filter select:focus {
+    border-color: #3A86FF;
+    outline: none;
+}
+
+.profile-section tr.top-1 td:first-child::before {
+    content: '\f091'; /* Ícone de troféu */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: #FFD700; /* Ouro */
+    margin-right: 0.5rem;
+}
+
+.profile-section tr.top-2 td:first-child::before {
+    content: '\f091';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: #C0C0C0; /* Prata */
+    margin-right: 0.5rem;
+}
+
+.profile-section tr.top-3 td:first-child::before {
+    content: '\f091';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: #CD7F32; /* Bronze */
+    margin-right: 0.5rem;
+}
+
 /* Content */
 .container {
     padding: 2rem;
@@ -877,5 +965,11 @@ h1 {
     }
     .benefits {
         grid-template-columns: 1fr;
+    }
+    .ranking-stats {
+        text-align: center;
+    }
+    .ranking-filter {
+        text-align: center;
     }
 }
