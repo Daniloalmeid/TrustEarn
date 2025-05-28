@@ -11,17 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Update wallet UI across pages
   function updateWalletUI() {
+    console.log("Atualizando UI da carteira...");
     const connectWalletBtn = document.getElementById('connectWallet');
     if (connectWalletBtn) {
       if (walletAddress) {
         connectWalletBtn.textContent = 'Desconectar';
-        connectWalletBtn.classList.add('connected');
-        connectWalletBtn.classList.add('btn-secondary');
+        connectWalletBtn.classList.add('connected', 'btn-secondary');
         connectWalletBtn.classList.remove('btn-primary');
       } else {
         connectWalletBtn.textContent = 'Conectar Carteira';
-        connectWalletBtn.classList.remove('connected');
-        connectWalletBtn.classList.remove('btn-secondary');
+        connectWalletBtn.classList.remove('connected', 'btn-secondary');
         connectWalletBtn.classList.add('btn-primary');
       }
       checkReviewedProducts();
@@ -46,12 +45,23 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.removeItem('walletAddress');
   }
 
+  // Count reviews for a product
+  function countProductReviews(productName) {
+    const walletsData = JSON.parse(localStorage.getItem('walletsData') || '{}');
+    let count = 0;
+    Object.values(walletsData).forEach(userData => {
+      if (userData.reviews) {
+        count += userData.reviews.filter(review => review.product === productName).length;
+      }
+    });
+    return count;
+  }
+
   // Wallet Connection/Disconnection
   const connectWalletBtn = document.getElementById('connectWallet');
   if (connectWalletBtn) {
     connectWalletBtn.addEventListener('click', () => {
       if (walletAddress) {
-        // Disconnect wallet
         walletAddress = null;
         clearWalletAddress();
         alert('Carteira desconectada!');
@@ -59,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStakedTokens();
         updateProfilePage();
       } else {
-        // Connect wallet
         if (typeof window.solana !== 'undefined' && window.solana.isPhantom) {
           window.solana.connect()
             .then((resp) => {
@@ -123,118 +132,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load products dynamically
   function loadProducts() {
-    console.log("=== Loading Products ===");
+    console.log("=== Carregando Produtos ===");
     const productList = document.querySelector('.product-list');
     if (!productList) {
       console.error("Elemento .product-list não encontrado!");
       return;
     }
 
-    // Clear existing content
     productList.innerHTML = '';
     console.log("Lista de produtos limpa.");
 
-    // Default products
-    const defaultProducts = [
-      {
-        name: 'Smartphone X',
-        description: 'Smartphone de alto desempenho com câmera avançada e suporte a 5G.',
-        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
-        category: 'Eletrônicos',
-        wallet: 'default',
-        timestamp: new Date().toLocaleString('pt-BR')
-      },
-      {
-        name: 'Headphone Pro',
-        description: 'Fones sem fio com cancelamento de ruído e bateria de longa duração.',
-        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e',
-        category: 'Eletrônicos',
-        wallet: 'default',
-        timestamp: new Date().toLocaleString('pt-BR')
-      },
-      {
-        name: 'Smartwatch Z',
-        description: 'Rastreador fitness com monitor de batimentos e design elegante.',
-        image: 'https://images.unsplash.com/photo-1618384887924-16ec33fab9ef',
-        category: 'Acessórios',
-        wallet: 'default',
-        timestamp: new Date().toLocaleString('pt-BR')
-      },
-      {
-        name: 'Laptop Ultra',
-        description: 'Laptop poderoso para jogos e produtividade com tela de alta resolução.',
-        image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1',
-        category: 'Eletrônicos',
-        wallet: 'default',
-        timestamp: new Date().toLocaleString('pt-BR')
-      },
-      {
-        name: 'Tênis Esportivo',
-        description: 'Tênis leve e confortável para corridas e atividades ao ar livre.',
-        image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5',
-        category: 'Esportes',
-        wallet: 'default',
-        timestamp: new Date().toLocaleString('pt-BR')
-      },
-      {
-        name: 'Perfume Floral',
-        description: 'Fragrância elegante com notas florais para o dia a dia.',
-        image: 'https://images.unsplash.com/photo-1588515724527-07747c2d5834',
-        category: 'Beleza',
-        wallet: 'default',
-        timestamp: new Date().toLocaleString('pt-BR')
-      }
-    ];
+    // Default products (removidos)
+    const defaultProducts = [];
 
-    // Load user-submitted products
+    // Load user products
     let userProducts = [];
     try {
       userProducts = JSON.parse(localStorage.getItem('products') || '[]');
-      console.log("Produtos do usuário carregados:", userProducts);
+      console.log("Produtos do usuário:", userProducts.length);
     } catch (error) {
       console.error("Erro ao carregar produtos do localStorage:", error);
     }
 
     const allProducts = [...defaultProducts, ...userProducts];
-    console.log("Total de produtos a renderizar:", allProducts.length);
+    console.log("Total de produtos:", allProducts.length);
 
     if (allProducts.length === 0) {
       productList.innerHTML = '<p>Nenhum produto disponível para avaliação.</p>';
-      console.log("Nenhum produto para exibir.");
       return;
     }
 
-    // Group products by category
-    const productsByCategory = {};
+    // Group by category
+    const categories = {};
     allProducts.forEach(product => {
-      const category = product.category || 'Outros';
-      if (!productsByCategory[category]) {
-        productsByCategory[category] = [];
+      if (!categories[product.category]) {
+        categories[product.category] = [];
       }
-      productsByCategory[category].push(product);
+      categories[product.category].push(product);
     });
 
-    console.log("Produtos agrupados por categoria:", productsByCategory);
+    console.log("Categorias encontradas:", Object.keys(categories));
 
     // Render products by category
-    Object.keys(productsByCategory).sort().forEach((category, catIndex) => {
+    Object.keys(categories).forEach(category => {
       console.log(`Renderizando categoria: ${category}`);
       const categorySection = document.createElement('div');
       categorySection.className = 'category-section';
-      categorySection.id = `category-${catIndex}`; // ID único para cada seção
+      categorySection.innerHTML = `<h3 class="category-title">${category}</h3>`;
+      const grid = document.createElement('div');
+      grid.className = 'product-grid';
+      categorySection.appendChild(grid);
+      productList.appendChild(categorySection);
 
-      const categoryTitle = document.createElement('h2');
-      categoryTitle.className = 'category-title';
-      categoryTitle.textContent = category;
-      categorySection.appendChild(categoryTitle);
-
-      const productGrid = document.createElement('div');
-      productGrid.className = 'product-grid';
-      categorySection.appendChild(productGrid);
-
-      productsByCategory[category].forEach((product, index) => {
-        console.log(`Renderizando produto: ${product.name}`);
-        const globalIndex = allProducts.indexOf(product); // Índice único para o formulário
+      categories[category].forEach((product, index) => {
+        console.log(`  Produto: ${product.name}`);
+        const reviewCount = countProductReviews(product.name);
         const card = document.createElement('div');
         card.className = 'product-card';
         card.innerHTML = `
@@ -242,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="content">
             <h3>${product.name}</h3>
             <p>${product.description}</p>
+            <span class="review-count"><i class="fas fa-star"></i> ${reviewCount} Avaliação${reviewCount !== 1 ? 'ões' : ''}</span>
             <span class="read-more">Ler mais</span>
             <button class="btn-select">Avaliar Produto</button>
           </div>
@@ -249,8 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4>Avaliar ${product.name}</h4>
             <form>
               <div class="form-group">
-                <label for="reviewText${globalIndex + 1}">Sua Avaliação</label>
-                <textarea id="reviewText${globalIndex + 1}" rows="3" placeholder="Compartilhe suas impressões..." required></textarea>
+                <label for="reviewText${category}_${index}">Sua Avaliação</label>
+                <textarea id="reviewText${category}_${index}" rows="3" placeholder="Compartilhe suas impressões..." required></textarea>
               </div>
               <div class="form-group">
                 <label>Classificação</label>
@@ -273,23 +226,20 @@ document.addEventListener('DOMContentLoaded', () => {
             </form>
           </div>
         `;
-        productGrid.appendChild(card);
+        grid.appendChild(card);
 
-        // Add event listener for "Ler mais"
+        // "Ler mais" handler
         const readMore = card.querySelector('.read-more');
         readMore.addEventListener('click', () => {
           const description = card.querySelector('p');
           const isExpanded = description.classList.toggle('expanded');
           readMore.textContent = isExpanded ? 'Ler menos' : 'Ler mais';
-          console.log(`Descrição do produto ${product.name} ${isExpanded ? 'expandida' : 'recolhida'}`);
+          console.log(`Descrição ${product.name} ${isExpanded ? 'expandida' : 'recolhida'}`);
         });
       });
-
-      productList.appendChild(categorySection);
     });
 
-    console.log("Produtos renderizados com sucesso.");
-    // Reattach event listeners
+    console.log("Renderização concluída.");
     checkReviewedProducts();
     attachReviewFormListeners();
   }
@@ -298,27 +248,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function attachReviewFormListeners() {
     const productCards = document.querySelectorAll('.product-card');
     productCards.forEach(card => {
-      const reviewForm = card.querySelector('.review-form');
-      const form = reviewForm ? reviewForm.querySelector('form') : null;
-      if (!form) return;
+      const reviewForm = card.querySelector('.review-form form');
+      if (!reviewForm) return;
 
-      // Star Rating
-      const stars = form.querySelectorAll('.star');
+      // Star rating
+      const stars = reviewForm.querySelectorAll('.star');
       stars.forEach(star => {
         star.addEventListener('click', () => {
           const rating = star.getAttribute('data-value');
           stars.forEach(s => {
-            if (s.getAttribute('data-value') <= rating) {
-              s.classList.add('selected');
-            } else {
-              s.classList.remove('selected');
-            }
+            s.classList.toggle('selected', s.getAttribute('data-value') <= rating);
           });
         });
       });
 
-      // Thumb Rating
-      const thumbs = form.querySelectorAll('.thumb');
+      // Thumb rating
+      const thumbs = reviewForm.querySelectorAll('.thumb');
       thumbs.forEach(thumb => {
         thumb.addEventListener('click', () => {
           thumbs.forEach(t => t.classList.remove('selected'));
@@ -326,8 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
 
-      // Review Form Submission
-      form.addEventListener('submit', (e) => {
+      // Form submission
+      reviewForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!walletAddress) {
           alert('Por favor, conecte sua carteira primeiro!');
@@ -335,52 +280,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const productName = card.querySelector('h3').textContent;
-        const reviewText = form.querySelector('textarea').value.trim();
-        const selectedStars = form.querySelectorAll('.star.selected').length;
-        const selectedThumb = form.querySelector('.thumb.selected');
+        const reviewText = reviewForm.querySelector('textarea').value.trim();
+        const selectedStars = reviewForm.querySelectorAll('.star.selected').length;
+        const selectedThumb = reviewForm.querySelector('.thumb.selected');
         const thumbType = selectedThumb ? (selectedThumb.classList.contains('up') ? 'Positivo' : 'Negativo') : null;
 
-        // Validation
         if (!reviewText || reviewText.length < 10) {
-          alert('Por favor, escreva uma avaliação com pelo menos 10 caracteres.');
+          alert('A avaliação deve ter pelo menos 10 caracteres.');
           return;
         }
         if (selectedStars === 0) {
-          alert('Por favor, selecione uma classificação por estrelas.');
+          alert('Selecione uma classificação por estrelas.');
           return;
         }
         if (!thumbType) {
-          alert('Por favor, selecione um sentimento (polegar para cima ou para baixo).');
+          alert('Selecione um sentimento (polegar para cima ou para baixo).');
           return;
         }
 
-        // Check if already reviewed
         const userData = getUserData(walletAddress);
         if (userData.reviews.some(review => review.product === productName)) {
           alert('Você já avaliou este produto!');
           return;
         }
 
-        // Token reward
-        const tokensEarned = 10; // 10 DET per review
-        const stakeAmount = tokensEarned * 0.1; // 10% to stake
-        const availableTokens = tokensEarned - stakeAmount; // 90% to balance
+        const tokensEarned = 10;
+        const stakeAmount = tokensEarned * 0.1;
+        const availableTokens = tokensEarned - stakeAmount;
 
-        // Store review
-        const reviewData = {
+        userData.reviews.push({
           product: productName,
           text: reviewText,
           stars: selectedStars,
           thumb: thumbType,
           tokens: tokensEarned,
           timestamp: new Date().toLocaleString('pt-BR')
-        };
-        userData.reviews.push(reviewData);
+        });
 
-        // Update balance
         userData.balance += availableTokens;
-
-        // Store stake
         userData.stakes.push({
           amount: stakeAmount,
           date: new Date().toISOString()
@@ -388,17 +325,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saveUserData(walletAddress, userData);
 
-        alert(`Avaliação enviada para ${productName}!\nClassificação: ${selectedStars} estrelas\nSentimento: ${thumbType}\nAvaliação: ${reviewText}\nTokens Ganhos: ${tokensEarned.toFixed(2)} DET\nStaked: ${stakeAmount.toFixed(2)} DET (90 dias, 50% de retorno)`);
+        alert(`Avaliação enviada para ${productName}!\nClassificação: ${selectedStars} estrelas\nSentimento: ${thumbType}\nTokens Ganhos: ${tokensEarned.toFixed(2)} DET`);
 
-        form.reset();
+        reviewForm.reset();
         stars.forEach(s => s.classList.remove('selected'));
         thumbs.forEach(t => t.classList.remove('selected'));
         const selectBtn = card.querySelector('.btn-select');
         selectBtn.classList.add('disabled');
         selectBtn.textContent = '✓ Já Avaliado';
         selectBtn.removeEventListener('click', toggleReviewForm);
-        card.classList.remove('review-active'); // Volta ao estado inicial
-
+        card.classList.remove('review-active');
+        loadProducts(); // Atualiza os contadores
         updateStakedTokens();
         updateProfilePage();
       });
@@ -424,18 +361,16 @@ document.addEventListener('DOMContentLoaded', () => {
       let latestReleaseDate = null;
       let totalRewards = 0;
 
-      // Process stakes
       const updatedStakes = [];
       userData.stakes.forEach(stake => {
         const stakeDate = new Date(stake.date);
-        const releaseDate = new Date(stakeDate.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 dias
+        const releaseDate = new Date(stakeDate.getTime() + 90 * 24 * 60 * 60 * 1000);
         if (isNaN(releaseDate.getTime())) {
           console.error('Data de stake inválida:', stake.date);
           return;
         }
         if (now >= releaseDate) {
-          // Release stake
-          userData.balance += stake.amount + (stake.amount * 0.5); // +50%
+          userData.balance += stake.amount + (stake.amount * 0.5);
           console.log(`Stake liberado: ${stake.amount.toFixed(2)} DET + ${(stake.amount * 0.5).toFixed(2)} DET`);
         } else {
           updatedStakes.push(stake);
@@ -507,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitProductForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!walletAddress) {
-        showMessage('Por favor, conecte sua carteira primeiro!', 'error');
+        showMessage('Conecte sua carteira primeiro!', 'error');
         return;
       }
 
@@ -516,9 +451,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const image = document.getElementById('productImage').value.trim();
       const category = document.getElementById('productCategory').value;
 
-      // Validation
       if (!name) {
-        showMessage('Por favor, informe o nome do produto.', 'error');
+        showMessage('Informe o nome do produto.', 'error');
         return;
       }
       if (!description || description.length < 10) {
@@ -530,22 +464,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       if (!image) {
-        showMessage('Por favor, informe uma URL de imagem.', 'error');
+        showMessage('Informe uma URL de imagem.', 'error');
         return;
       }
       if (!category) {
-        showMessage('Por favor, selecione uma categoria.', 'error');
+        showMessage('Selecione uma categoria.', 'error');
         return;
       }
 
-      // Check if image is valid
       const isImageValid = await isValidImageUrl(image);
       if (!isImageValid) {
         showMessage('A URL fornecida não é uma imagem válida.', 'error');
         return;
       }
 
-      // Save product
       const productData = {
         name,
         description,
@@ -561,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       showMessage('Produto enviado com sucesso!', 'success');
       submitProductForm.reset();
-      loadProducts(); // Refresh evaluate.html if open
+      loadProducts();
     });
   }
 
@@ -580,18 +512,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Validate image URL by attempting to load it
+  // Validate image URL
   function isValidImageUrl(url) {
     return new Promise((resolve) => {
       try {
-        // Check if URL is syntactically valid
         new URL(url);
-        // Test if it's an image
         const img = new Image();
         img.onload = () => resolve(true);
         img.onerror = () => resolve(false);
         img.src = url;
-        // Timeout after 5 seconds
         setTimeout(() => resolve(false), 5000);
       } catch (_) {
         resolve(false);

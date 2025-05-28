@@ -153,7 +153,7 @@ body {
     text-decoration: none;
     transition: background-color 0.3s ease, transform 0.2s ease;
     cursor: pointer;
-    margin-top: auto; /* Alinha o botão na base do conteúdo */
+    margin-top: auto;
 }
 
 .btn-select:hover {
@@ -162,7 +162,7 @@ body {
 }
 
 .btn-select.disabled {
-    background-color: #DC3545; /* Vermelho para "Já Avaliado" */
+    background-color: #DC3545;
     color: #FFFFFF;
     cursor: not-allowed;
 }
@@ -193,7 +193,7 @@ body {
 }
 
 .btn-submit:disabled, .btn-submit.disabled {
-    background-color: #DC3545; /* Vermelho */
+    background-color: #DC3545;
     color: #FFFFFF;
     cursor: not-allowed;
     transform: none;
@@ -203,7 +203,7 @@ body {
 .hero {
     text-align: center;
     padding: 4rem 2rem;
-    background: linear-gradient(135deg, #F7F9FC 0%, #E6E9F0);
+    background: linear-gradient(135deg, #F7F9FC 0%, #E6E9F0 100%);
 }
 
 .hero h1 {
@@ -216,10 +216,20 @@ body {
 .hero p {
     color: #333333;
     font-size: 1.2rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-/* Product Categories */
+.hero .btn-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Product Cards */
+.product-list {
+    padding: 1.5rem 0;
+}
+
 .category-section {
     margin-bottom: 2rem;
 }
@@ -233,16 +243,10 @@ body {
     padding-bottom: 0.5rem;
 }
 
-/* Product Cards */
-.product-list {
-    padding: 1rem 0;
-}
-
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 2rem;
-    padding: 1.5rem 0;
 }
 
 .product-card {
@@ -262,21 +266,22 @@ body {
 
 .product-card img {
     width: 100%;
-    height: 100px;
+    height: 300px; /* Reduzido de 300px */
     object-fit: cover;
     border-bottom: 1px solid #E6E9F0;
+    max-height: 300px;
 }
 
 .product-card .content {
-    padding: 0.75rem;
+    padding: 1rem;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    min-height: 150px; /* Garante altura mínima para alinhar botões */
+    min-height: 160px;
 }
 
 .product-card.review-active .content {
-    display: none; /* Oculta o conteúdo quando o formulário está ativo */
+    display: none;
 }
 
 .product-card h3 {
@@ -315,16 +320,30 @@ body {
     color: #2A6EE6;
 }
 
+.product-card .review-count {
+    color: #1E2A38;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.product-card .review-count i {
+    color: #3A86FF;
+    margin-right: 0.3rem;
+}
+
 /* Review Form (Inside Card) */
 .product-card .review-form {
-    padding: 0.75rem;
+    padding: 1rem;
     background-color: #F7F9FC;
     border-top: 1px solid #E6E9F0;
-    display: none; /* Oculta por padrão */
+    display: none;
 }
 
 .product-card.review-active .review-form {
-    display: block; /* Exibe quando ativo */
+    display: block;
 }
 
 .review-form h4 {
@@ -409,7 +428,7 @@ body {
 
 .review-form .thumb.up.selected,
 .review-form .thumb.up:hover {
-    color: #28A745; /* Verde */
+    color: #28A745;
 }
 
 .review-form .thumb.down {
@@ -418,7 +437,7 @@ body {
 
 .review-form .thumb.down.selected,
 .review-form .thumb.down:hover {
-    color: #DC3545; /* Vermelho */
+    color: #DC3545;
 }
 
 /* Profile Section */
@@ -599,11 +618,11 @@ body {
 }
 
 .profile-section .thumb-up {
-    color: #28A745; /* Verde */
+    color: #28A745;
 }
 
 .profile-section .thumb-down {
-    color: #DC3545; /* Vermelho */
+    color: #DC3545;
 }
 
 /* Submit Product Section */
@@ -732,7 +751,7 @@ h1 {
         max-width: 300px;
     }
     .product-card img {
-        height: 80px;
+        height: 120px;
     }
     .product-card h3 {
         font-size: 1rem;
@@ -741,16 +760,13 @@ h1 {
         font-size: 0.75rem;
     }
     .product-card .content {
-        min-height: 120px; /* Ajuste para dispositivos móveis */
+        min-height: 140px;
     }
     .review-form {
         padding: 0.5rem;
     }
     .review-form h4 {
         font-size: 0.8rem;
-    }
-    .category-title {
-        font-size: 1.3rem;
     }
     .profile-section {
         padding: 2rem;
