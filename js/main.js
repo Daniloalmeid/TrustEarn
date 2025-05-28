@@ -57,6 +57,43 @@ document.addEventListener('DOMContentLoaded', () => {
     return count;
   }
 
+  // Validate review with Twinword Sentiment Analysis API (Commented out)
+  /*
+  async function validateReviewWithAI(reviewText) {
+    try {
+      const response = await fetch('https://twinword-sentiment-analysis.p.rapidapi.com/analyze/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-RapidAPI-Key': '6262f011ecmshc395a7a32629505p197598jsn66a854822ec1',
+          'X-RapidAPI-Host': 'twinword-sentiment-analysis.p.rapidapi.com'
+        },
+        body: new URLSearchParams({
+          text: reviewText // Requer texto em inglês
+        })
+      });
+
+      if (!response.ok) {
+        console.error('Erro na Twinword:', response.statusText);
+        return false;
+      }
+
+      const result = await response.json();
+      console.log('Resposta da Twinword:', result);
+      const score = result.score;
+      const type = result.type;
+      const isValid = score >= -0.3 && type !== 'negative'; // Aceita neutro ou positivo, rejeita muito negativo
+      if (!isValid) {
+        console.log('Avaliação inválida:', { score, type });
+      }
+      return isValid;
+    } catch (error) {
+      console.error('Erro na validação da Twinword:', error);
+      return false;
+    }
+  }
+  */
+
   // Wallet Connection/Disconnection
   const connectWalletBtn = document.getElementById('connectWallet');
   if (connectWalletBtn) {
@@ -154,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error("Erro ao carregar produtos do localStorage:", error);
     }
 
-    const allProducts = [...defaultProducts, ...userProducts];
+    const allProducts = userProducts;
     console.log("Total de produtos:", allProducts.length);
 
     if (allProducts.length === 0) {
@@ -202,8 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4>Avaliar ${product.name}</h4>
             <form>
               <div class="form-group">
-                <label for="reviewText${category}_${index}">Sua Avaliação</label>
-                <textarea id="reviewText${category}_${index}" rows="3" placeholder="Compartilhe suas impressões..." required></textarea>
+                <label for="reviewText${category}_${index}">Sua Avaliação (em inglês)</label>
+                <textarea id="reviewText${category}_${index}" rows="3" placeholder="Share your feedback in English..." required></textarea>
               </div>
               <div class="form-group">
                 <label>Classificação</label>
@@ -272,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // Form submission
-      reviewForm.addEventListener('submit', (e) => {
+      reviewForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!walletAddress) {
           alert('Por favor, conecte sua carteira primeiro!');
@@ -303,6 +340,15 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('Você já avaliou este produto!');
           return;
         }
+
+        // Validação via Twinword (Commented out)
+        /*
+        const isValid = await validateReviewWithAI(reviewText);
+        if (!isValid) {
+          alert('A avaliação contém conteúdo inválido ou muito negativo. Por favor, revise seu texto (use inglês).');
+          return;
+        }
+        */
 
         const tokensEarned = 10;
         const stakeAmount = tokensEarned * 0.1;
@@ -335,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectBtn.textContent = '✓ Já Avaliado';
         selectBtn.removeEventListener('click', toggleReviewForm);
         card.classList.remove('review-active');
-        loadProducts(); // Atualiza os contadores
+        loadProducts();
         updateStakedTokens();
         updateProfilePage();
       });
@@ -521,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         img.onload = () => resolve(true);
         img.onerror = () => resolve(false);
         img.src = url;
-        setTimeout(() => resolve(false), 5000);
+        setTimeout(() => resolve(false), 3000);
       } catch (_) {
         resolve(false);
       }

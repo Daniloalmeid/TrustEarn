@@ -162,13 +162,13 @@ body {
 }
 
 .btn-select.disabled {
-    background-color: #DC3545;
+    background-color: #DC3545; /* Botão "Já Avaliado" vermelho */
     color: #FFFFFF;
     cursor: not-allowed;
 }
 
 .btn-select.disabled:hover {
-    background-color: #DC3545;
+    background-color: #DC3545; /* Mantém vermelho no hover */
     transform: none;
 }
 
@@ -192,7 +192,7 @@ body {
     transform: translateY(-2px);
 }
 
-.btn-submit:disabled, .btn-submit.disabled {
+.btn-submit:disabled {
     background-color: #DC3545;
     color: #FFFFFF;
     cursor: not-allowed;
@@ -245,8 +245,9 @@ body {
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+    justify-content: center;
 }
 
 .product-card {
@@ -257,6 +258,8 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
+    width: 300px;
+    margin: 0 auto;
 }
 
 .product-card:hover {
@@ -265,8 +268,8 @@ body {
 }
 
 .product-card img {
-    width: 100%;
-    height: 300px; /* Reduzido de 300px */
+    width: 300px;
+    height: 300px;
     object-fit: cover;
     border-bottom: 1px solid #E6E9F0;
     max-height: 300px;
@@ -277,7 +280,7 @@ body {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    min-height: 160px;
+    min-height: 180px;
 }
 
 .product-card.review-active .content {
@@ -393,12 +396,12 @@ body {
 .review-form .star-rating {
     display: flex;
     justify-content: center;
-    gap: 0.2rem;
+    gap: 0.3rem;
     margin-bottom: 0.5rem;
 }
 
 .review-form .star {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: #E6E9F0;
     cursor: pointer;
     transition: color 0.3s ease;
@@ -723,6 +726,71 @@ body {
     color: #FFFFFF;
 }
 
+/* How It Works - Steps and Benefits */
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.step {
+    background-color: #F7F9FC;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.step .icon {
+    color: #3A86FF;
+    margin-bottom: 1rem;
+}
+
+.step h4 {
+    color: #1E2A38;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.step p {
+    color: #333333;
+    font-size: 0.9rem;
+}
+
+.benefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.benefit {
+    text-align: center;
+}
+
+.benefit .icon {
+    color: #3A86FF;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.benefit p {
+    color: #333333;
+    font-size: 0.9rem;
+}
+
+.benefit p strong {
+    color: #1E2A38;
+    font-weight: 600;
+}
+
 /* Content */
 .container {
     padding: 2rem;
@@ -750,8 +818,13 @@ h1 {
         width: 100%;
         max-width: 300px;
     }
+    .product-card {
+        width: 250px;
+    }
     .product-card img {
-        height: 120px;
+        width: 250px;
+        height: 250px;
+        max-height: 250px;
     }
     .product-card h3 {
         font-size: 1rem;
@@ -760,7 +833,7 @@ h1 {
         font-size: 0.75rem;
     }
     .product-card .content {
-        min-height: 140px;
+        min-height: 160px;
     }
     .review-form {
         padding: 0.5rem;
@@ -798,5 +871,11 @@ h1 {
     }
     .submit-product-section h2 {
         font-size: 1.8rem;
+    }
+    .steps {
+        grid-template-columns: 1fr;
+    }
+    .benefits {
+        grid-template-columns: 1fr;
     }
 }
